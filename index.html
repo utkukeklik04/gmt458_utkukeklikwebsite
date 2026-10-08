@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utku Keklik | Web Sayfası</title>
+</head>
+<body>
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+        <button onclick="setLanguage('en')">🇬🇧 English</button>
+    </div>
+
+    <div id="content-tr">
+
+        <nav>
+            <a href="index.html">Hakkımda</a> | 
+            <a href="teknolojiler.html">Teknolojiler</a> | 
+            <a href="projeler.html">Projeler</a>
+        </nav>
+        <hr>
+        <h1>Merhaba,ilk yaptığım Web Sayfasına Hoş Geldiniz!</h1>
+        <p>Benim adım Utku Keklik. Geomatik Mühendisliği 4. sınıf öğrencisiyim.</p>
+        <p>Bu sayfa benim <strong>ilk web sitem</strong> (Bu siteyi GMT 458 dersi ödevim kapsamında geliştiriyorum).</p>
+    </div>
+
+    <div id="content-en" style="display: none;">
+        <nav>
+            <a href="index.html">About Me</a> | 
+            <a href="teknolojiler.html">Technologies</a> | 
+            <a href="projeler.html">Projects</a>
+        </nav>
+        <hr>
+        <h1>Hello, Welcome to My Web Page!</h1>
+        <p>My name is Utku Keklik. I am a 4th-year Geomatics Engineering student.</p>
+        <p>This page is my personal and <strong> first website I have ever created!</strong> (I am developing this site as part of my GMT 458 course assignment).</p>
+    </div>
+
+    <script>
+        function setLanguage(lang) {
+            if (lang === 'tr') {
+                document.getElementById('content-tr').style.display = 'block';
+                document.getElementById('content-en').style.display = 'none';
+            } else if (lang === 'en') {
+                document.getElementById('content-tr').style.display = 'none';
+                document.getElementById('content-en').style.display = 'block';
+            }
+        }
+    </script>
+
+</body>
+</html>
