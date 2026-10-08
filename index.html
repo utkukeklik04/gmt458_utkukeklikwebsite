@@ -1,53 +1,80 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utku Keklik | Web Sayfası</title>
+    <title>Utku Keklik | Personal Web Page</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div style="text-align: right; margin-bottom: 20px;">
-        <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
-        <button onclick="setLanguage('en')">🇬🇧 English</button>
+<div class="container">
+
+    <div class="header-bar">
+        <a href="index.html" class="brand-link">
+            <div class="logo-badge">
+                <span>U</span>
+                <span>K</span>
+            </div>
+            <span class="brand-name">Utku Keklik</span>
+        </a>
+        <div>
+            <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+            <button onclick="setLanguage('en')">🇬🇧 English</button>
+        </div>
     </div>
 
-    <div id="content-tr">
-
+    <div id="content-tr" style="display: none;">
         <nav>
-            <a href="index.html">Hakkımda</a> | 
-            <a href="teknolojiler.html">Teknolojiler</a> | 
-            <a href="projeler.html">Projeler</a>
+            <a href="index.html">Hakkımda</a>
+            <a href="yetenekler.html">Yetenekler</a>
+            <a href="stajlar.html">Stajlarım</a>
+            <a href="haritalar.html">Haritalar</a>
         </nav>
         <hr>
-        <h1>Merhaba,ilk yaptığım Web Sayfasına Hoş Geldiniz!</h1>
-        <p>Benim adım Utku Keklik. Geomatik Mühendisliği 4. sınıf öğrencisiyim.</p>
-        <p>Bu sayfa benim <strong>ilk web sitem</strong> (Bu siteyi GMT 458 dersi ödevim kapsamında geliştiriyorum).</p>
+        <h1>Merhaba, ilk yaptığım Web Sayfasına Hoş Geldiniz!</h1>
+        <p>Benim adım Utku Keklik. 2004 yılında Ankara'da doğdum. Hacettepe Üniversitesi Geomatik Mühendisliği 4. sınıf öğrencisiyim.</p>
+        <p>Bu sayfa benim kişisel ve <strong>ilk geliştirdiğim web sitemdir</strong>.</p>
     </div>
 
-    <div id="content-en" style="display: none;">
+    <div id="content-en">
         <nav>
-            <a href="index.html">About Me</a> | 
-            <a href="teknolojiler.html">Technologies</a> | 
-            <a href="projeler.html">Projects</a>
+            <a href="index.html">About Me</a>
+            <a href="yetenekler.html">Skills</a>
+            <a href="stajlar.html">Internships</a>
+            <a href="haritalar.html">Maps</a>
         </nav>
         <hr>
         <h1>Hello, Welcome to My Web Page!</h1>
-        <p>My name is Utku Keklik. I am a 4th-year Geomatics Engineering student.</p>
-        <p>This page is my personal and <strong> first website I have ever created!</strong> (I am developing this site as part of my GMT 458 course assignment).</p>
+        <p>My name is Utku Keklik. I was born in Ankara in 2004. I am a 4th-year Geomatics Engineering student at Hacettepe University.</p>
+        <p>This page is my personal and <strong>first website I have ever created</strong>.</p>
     </div>
+
+</div>
+
+<footer>
+    © 2026 Utku Keklik GMT458
+</footer>
 
     <script>
         function setLanguage(lang) {
+            localStorage.setItem('siteLanguage', lang);
+            const trBox = document.getElementById('content-tr');
+            const enBox = document.getElementById('content-en');
+
             if (lang === 'tr') {
-                document.getElementById('content-tr').style.display = 'block';
-                document.getElementById('content-en').style.display = 'none';
-            } else if (lang === 'en') {
-                document.getElementById('content-tr').style.display = 'none';
-                document.getElementById('content-en').style.display = 'block';
+                if (trBox) trBox.style.display = 'block';
+                if (enBox) enBox.style.display = 'none';
+            } else {
+                if (trBox) trBox.style.display = 'none';
+                if (enBox) enBox.style.display = 'block';
             }
         }
-    </script>
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
+            setLanguage(savedLanguage);
+        });
+    </script>
 </body>
 </html>
