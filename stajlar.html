@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internships | Utku Keklik</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .internship-card {
+            background-color: #f9fbfd;
+            border-left: 5px solid #1e3c72;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .internship-card:hover {
+            transform: translateX(6px);
+            background-color: #f1f5f9;
+        }
+        .date-badge {
+            display: inline-block;
+            background-color: #1e3c72;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .company-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin: 0;
+        }
+        .location-tag {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .project-desc {
+            margin: 6px 0 0 0;
+            color: #334155;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header-bar">
+        <a href="index.html" class="brand-link">
+            <div class="logo-badge">
+                <span>U</span>
+                <span>K</span>
+            </div>
+            <span class="brand-name">Utku Keklik</span>
+        </a>
+        <div>
+            <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+            <button onclick="setLanguage('en')">🇬🇧 English</button>
+        </div>
+    </div>
+
+    <div id="content-tr" style="display: none;">
+        <nav>
+            <a href="index.html">Hakkımda</a>
+            <a href="yetenekler.html">Yetenekler</a>
+            <a href="stajlar.html">Stajlarım</a>
+            <a href="haritalar.html">Haritalar</a>
+        </nav>
+        <hr>
+        <h1>Staj Yaptığım Yerler</h1>
+        <p>Geomatik Mühendisliği eğitimim boyunca saha, ofis ve proje yönetimi tecrübesi edindiğim stajlarım:</p>
+        
+        <div class="internship-card">
+            <div class="date-badge">Temmuz - Ağustos 2025</div>
+            <div class="company-header">
+                <h3 class="company-name">Kolin İnşaat</h3>
+                <span class="location-tag">📍 Kazan, Ankara</span>
+            </div>
+            <p class="project-desc"><strong>Açıklama:</strong> Çamlıdere İvedik İçme Suyu Temini Projesi</p>
+        </div>
+
+        <div class="internship-card">
+            <div class="date-badge">Ağustos - Eylül 2025</div>
+            <div class="company-header">
+                <h3 class="company-name">ADB SAFEGATE Asia</h3>
+                <span class="location-tag">📍 Kuala Lumpur, Malezya</span>
+            </div>
+            <p class="project-desc"><strong>Açıklama:</strong> Perth Havalimanı Pist Aydınlatma Sistemleri Stajı</p>
+        </div>
+
+        <div class="internship-card">
+            <div class="date-badge">Temmuz - Ağustos 2026</div>
+            <div class="company-header">
+                <h3 class="company-name">Taşyapı İnşaat</h3>
+                <span class="location-tag">📍 Lefkoşa, KKTC</span>
+            </div>
+            <p class="project-desc"><strong>Açıklama:</strong> KKTC Ercan Havalimanı 2. Pist İnşaatı Stajı</p>
+        </div>
+    </div>
+
+    <div id="content-en">
+        <nav>
+            <a href="index.html">About Me</a>
+            <a href="yetenekler.html">Skills</a>
+            <a href="stajlar.html">Internships</a>
+            <a href="haritalar.html">Maps</a>
+        </nav>
+        <hr>
+        <h1>My Internships</h1>
+        <p>Internships where I gained practical field, technical, and site experience during my Geomatics Engineering studies:</p>
+        
+        <div class="internship-card">
+            <div class="date-badge">July - August 2025</div>
+            <div class="company-header">
+                <h3 class="company-name">Kolin Construction</h3>
+                <span class="location-tag">📍 Kazan, Ankara</span>
+            </div>
+            <p class="project-desc"><strong>Description:</strong> Camlidere Ivedik Drinking Water Supply Project</p>
+        </div>
+
+        <div class="internship-card">
+            <div class="date-badge">August - September 2025</div>
+            <div class="company-header">
+                <h3 class="company-name">ADB SAFEGATE Asia</h3>
+                <span class="location-tag">📍 Kuala Lumpur, Malaysia</span>
+            </div>
+            <p class="project-desc"><strong>Description:</strong> Perth Airport Runway Lighting Systems Internship</p>
+        </div>
+
+        <div class="internship-card">
+            <div class="date-badge">July - August 2026</div>
+            <div class="company-header">
+                <h3 class="company-name">Tasyapi Construction</h3>
+                <span class="location-tag">📍 Nicosia, TRNC</span>
+            </div>
+            <p class="project-desc"><strong>Description:</strong> TRNC Ercan Airport 2nd Runway Construction Internship</p>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Utku Keklik GMT458
+</footer>
+
+    <script>
+        function setLanguage(lang) {
+            localStorage.setItem('siteLanguage', lang);
+            const trBox = document.getElementById('content-tr');
+            const enBox = document.getElementById('content-en');
+
+            if (lang === 'tr') {
+                if (trBox) trBox.style.display = 'block';
+                if (enBox) enBox.style.display = 'none';
+            } else {
+                if (trBox) trBox.style.display = 'none';
+                if (enBox) enBox.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
+            setLanguage(savedLanguage);
+        });
+    </script>
+</body>
+</html>
