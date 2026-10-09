@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps | Utku Keklik</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+
+    <style>
+        .map-box {
+            width: 100%;
+            height: 440px;
+            border-radius: 14px;
+            margin: 12px 0 30px 0;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            background: #f8fafc;
+            position: relative;
+        }
+        .map-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-top: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header-bar">
+        <a href="index.html" class="brand-link">
+            <div class="logo-badge">
+                <span>U</span>
+                <span>K</span>
+            </div>
+            <span class="brand-name">Utku Keklik</span>
+        </a>
+        <div>
+            <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+            <button onclick="setLanguage('en')">🇬🇧 English</button>
+        </div>
+    </div>
+
+    <div id="content-tr" style="display: none;">
+        <nav>
+            <a href="index.html">Hakkımda</a>
+            <a href="yetenekler.html">Yetenekler</a>
+            <a href="stajlar.html">Stajlarım</a>
+            <a href="haritalar.html">Haritalar</a>
+        </nav>
+        <hr>
+        <h1>Web Haritaları (Web GIS)</h1>
+    </div>
+
+    <div id="content-en">
+        <nav>
+            <a href="index.html">About Me</a>
+            <a href="yetenekler.html">Skills</a>
+            <a href="stajlar.html">Internships</a>
+            <a href="haritalar.html">Maps</a>
+        </nav>
+        <hr>
+        <h1>Web Maps (Web GIS)</h1>
+    </div>
+
+    <div class="map-title" id="title-leaflet">1. Leaflet: Staj Lokasyonları Haritası</div>
+    <div id="leafletMap" class="map-box"></div>
+
+    <div class="map-title" id="title-ol">2. OpenLayers: Bulunduğum Şehirler Haritası</div>
+    <div id="openlayersMap" class="map-box"></div>
+
+</div>
+
+<footer>
+    © 2026 Utku Keklik GMT458
+</footer>
+
+    <script>
+        let leafletMapInstance = null;
+        let leafletMarkersLayer = null;
+        let openLayersMapInstance = null;
+        let currentLang = 'en';
+
+        const internshipPoints = [
+            {
+                coords: [40.2317, 32.6839],
+                tr: '<b>Kolin İnşaat</b><br>Kazan, Ankara<br>İçme Suyu Projesi Stajı',
+                en: '<b>Kolin Construction</b><br>Kazan, Ankara<br>Drinking Water Project'
+            },
+            {
+                coords: [3.1390, 101.6869],
+                tr: '<b>ADB SAFEGATE Asia</b><br>Kuala Lumpur, Malezya<br>Pist Aydınlatma Sistemleri Stajı',
+                en: '<b>ADB SAFEGATE Asia</b><br>Kuala Lumpur, Malaysia<br>Runway Lighting Systems'
+            },
+            {
+                coords: [35.1582, 33.4988],
+                tr: '<b>Taşyapı İnşaat</b><br>Lefkoşa, KKTC<br>Ercan Havalimanı 2. Pist İnşaatı Stajı',
+                en: '<b>Tasyapi Construction</b><br>Nicosia, TRNC<br>Ercan Airport 2nd Runway Project'
+            }
+        ];
+
+        const cities = [
+            { name: "İstanbul", coords: [28.9784, 41.0082] },
+            { name: "Ankara", coords: [32.8597, 39.9334] },
+            { name: "İzmir", coords: [27.1428, 38.4237] },
+            { name: "Bursa", coords: [29.0610, 40.1885] },
+            { name: "Antalya", coords: [30.7133, 36.8969] },
+            { name: "Gaziantep", coords: [37.3833, 37.0662] },
+            { name: "Karabük", coords: [32.6277, 41.2061] },
+            { name: "Mersin", coords: [34.6415, 36.8121] },
+            { name: "Freiburg", coords: [7.8522, 47.9990] },
+            { name: "Strazburg", coords: [7.7521, 48.5734] },
+            { name: "Basel", coords: [7.5886, 47.5596] },
+            { name: "Halep", coords: [37.1343, 36.2021] },
+            { name: "Kuala Lumpur", coords: [101.6869, 3.1390] },
+            { name: "Melakka", coords: [102.2501, 2.1896] },
+            { name: "Ipoh", coords: [101.0901, 4.5975] },
+            { name: "Seremban", coords: [101.9381, 2.7297] },
+            { name: "Eskişehir", coords: [30.5256, 39.7667] },
+            { name: "Afyonkarahisar", coords: [30.5467, 38.7507] },
+            { name: "Bartın", coords: [32.3375, 41.6344] },
+            { name: "Adana", coords: [35.3213, 37.0000] },
+            { name: "Manisa", coords: [27.4296, 38.6191] },
+            { name: "Kahramanmaraş", coords: [36.9371, 37.5858] },
+            { name: "Sivas", coords: [37.0179, 39.7477] },
+            { name: "Nevşehir", coords: [34.7142, 38.6244] },
+            { name: "Konya", coords: [32.4844, 37.8667] },
+            { name: "Malatya", coords: [38.3552, 38.3552] },
+            { name: "Balıkesir", coords: [27.8826, 39.6484] },
+            { name: "Çanakkale", coords: [26.4086, 40.1553] },
+            { name: "Tekirdağ", coords: [27.5110, 40.9833] },
+            { name: "Şanlıurfa", coords: [38.7955, 37.1674] },
+            { name: "Hatay", coords: [36.1667, 36.2022] },
+            { name: "Bolu", coords: [31.6061, 40.7350] },
+            { name: "Aydın", coords: [27.8456, 37.8560] },
+            { name: "Girne", coords: [33.3173, 35.3403] },
+            { name: "Lefkoşa", coords: [33.3667, 35.1856] },
+            { name: "Gazimağusa", coords: [33.9431, 35.1254] },
+            { name: "Dipkarpaz", coords: [34.3806, 35.5986] },
+            { name: "Aksaray", coords: [34.0254, 38.3687] },
+            { name: "Kayseri", coords: [35.4853, 38.7312] },
+            { name: "Colmar", coords: [7.3585, 48.0790] },
+            { name: "Mulhouse", coords: [7.3359, 47.7508] },
+            { name: "Breisach", coords: [7.5800, 48.0306] },
+            { name: "Bad Krozingen", coords: [7.7011, 47.9189] },
+            { name: "Offenburg", coords: [7.9433, 48.4737] }
+        ];
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('siteLanguage', lang);
+
+            const trBox = document.getElementById('content-tr');
+            const enBox = document.getElementById('content-en');
+            const lTitle = document.getElementById('title-leaflet');
+            const olTitle = document.getElementById('title-ol');
+
+            if (lang === 'tr') {
+                if (trBox) trBox.style.display = 'block';
+                if (enBox) enBox.style.display = 'none';
+                if (lTitle) lTitle.innerHTML = '1. Leaflet: Staj Lokasyonları Haritası';
+                if (olTitle) olTitle.innerHTML = '2. OpenLayers: Bulunduğum Şehirler Haritası';
+            } else {
+                if (trBox) trBox.style.display = 'none';
+                if (enBox) enBox.style.display = 'block';
+                if (lTitle) lTitle.innerHTML = '1. Leaflet: Internship Locations Map';
+                if (olTitle) olTitle.innerHTML = '2. OpenLayers: Cities I Have Visited';
+            }
+
+            renderLeafletMarkers();
+            triggerMapResize();
+        }
+
+        function triggerMapResize() {
+            setTimeout(() => {
+                if (leafletMapInstance) leafletMapInstance.invalidateSize();
+                if (openLayersMapInstance) openLayersMapInstance.updateSize();
+            }, 100);
+        }
+
+        function initLeafletMap() {
+            leafletMapInstance = L.map('leafletMap', {
+                minZoom: 1,
+                maxBounds: [[-85, -180], [85, 180]],
+                maxBoundsViscosity: 1.0
+            }).setView([20, 60], 2);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                noWrap: true,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(leafletMapInstance);
+
+            leafletMarkersLayer = L.layerGroup().addTo(leafletMapInstance);
+            renderLeafletMarkers();
+        }
+
+        function renderLeafletMarkers() {
+            if (!leafletMarkersLayer) return;
+            leafletMarkersLayer.clearLayers();
+            internshipPoints.forEach(p => {
+                const text = (currentLang === 'tr') ? p.tr : p.en;
+                const m = L.marker(p.coords).bindPopup(text);
+                leafletMarkersLayer.addLayer(m);
+            });
+        }
+
+        function initOpenLayersMap() {
+            const rasterLayer = new ol.layer.Tile({
+                source: new ol.source.OSM({
+                    wrapX: false
+                })
+            });
+
+            const features = cities.map(c => {
+                return new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.fromLonLat(c.coords)),
+                    name: c.name
+                });
+            });
+
+            const vectorSource = new ol.source.Vector({
+                features: features,
+                wrapX: false
+            });
+
+            const vectorLayer = new ol.layer.Vector({
+                source: vectorSource,
+                style: function(feature, resolution) {
+                    const showLabels = resolution < 6000;
+
+                    return new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: showLabels ? 7 : 5,
+                            fill: new ol.style.Fill({ color: '#e11d48' }),
+                            stroke: new ol.style.Stroke({ color: '#ffffff', width: 2 })
+                        }),
+                        text: showLabels ? new ol.style.Text({
+                            text: feature.get('name'),
+                            offsetY: -14,
+                            font: 'bold 11px sans-serif',
+                            fill: new ol.style.Fill({ color: '#0f172a' }),
+                            stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 })
+                        }) : null
+                    });
+                }
+            });
+
+            openLayersMapInstance = new ol.Map({
+                target: 'openlayersMap',
+                layers: [rasterLayer, vectorLayer],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([50, 30]),
+                    zoom: 2,
+                    minZoom: 1,
+                    extent: ol.proj.transformExtent([-180, -85, 180, 85], 'EPSG:4326', 'EPSG:3857')
+                })
+            });
+        }
+
+        window.addEventListener('load', () => {
+            initLeafletMap();
+            initOpenLayersMap();
+            const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
+            setLanguage(savedLanguage);
+            triggerMapResize();
+        });
+    </script>
+</body>
+</html>

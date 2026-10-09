@@ -58,6 +58,21 @@
 </head>
 <body>
 
+<div class="background-animations">
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    
+    <div class="bg-element bg-rocket r-1">🚀</div>
+    <div class="bg-element bg-rocket r-2">🚀</div>
+    <div class="bg-element bg-satellite s-1">🛰️</div>
+    <div class="bg-element bg-satellite s-2">🛰️</div>
+</div>
+
 <div class="container">
 
     <div class="header-bar">
@@ -82,8 +97,10 @@
             <a href="haritalar.html">Haritalar</a>
         </nav>
         <hr>
-        <h1>Staj Yaptığım Yerler</h1>
-        <p>Geomatik Mühendisliği eğitimim boyunca saha, ofis ve proje yönetimi tecrübesi edindiğim stajlarım:</p>
+        <div>
+            <h1>Staj Yaptığım Yerler</h1>
+            <p>Geomatik Mühendisliği eğitimim boyunca saha, ofis ve proje yönetimi tecrübesi edindiğim stajlarım:</p>
+        </div>
         
         <div class="internship-card">
             <div class="date-badge">Temmuz - Ağustos 2025</div>
@@ -94,7 +111,7 @@
             <p class="project-desc"><strong>Açıklama:</strong> Çamlıdere İvedik İçme Suyu Temini Projesi</p>
         </div>
 
-        <div class="internship-card">
+        <div class="internship-card scroll-reveal">
             <div class="date-badge">Ağustos - Eylül 2025</div>
             <div class="company-header">
                 <h3 class="company-name">ADB SAFEGATE Asia</h3>
@@ -103,7 +120,7 @@
             <p class="project-desc"><strong>Açıklama:</strong> Perth Havalimanı Pist Aydınlatma Sistemleri Stajı</p>
         </div>
 
-        <div class="internship-card">
+        <div class="internship-card scroll-reveal">
             <div class="date-badge">Temmuz - Ağustos 2026</div>
             <div class="company-header">
                 <h3 class="company-name">Taşyapı İnşaat</h3>
@@ -121,8 +138,10 @@
             <a href="haritalar.html">Maps</a>
         </nav>
         <hr>
-        <h1>My Internships</h1>
-        <p>Internships where I gained practical field, technical, and site experience during my Geomatics Engineering studies:</p>
+        <div>
+            <h1>My Internships</h1>
+            <p>Internships where I gained practical field, technical, and site experience during my Geomatics Engineering studies:</p>
+        </div>
         
         <div class="internship-card">
             <div class="date-badge">July - August 2025</div>
@@ -133,7 +152,7 @@
             <p class="project-desc"><strong>Description:</strong> Camlidere Ivedik Drinking Water Supply Project</p>
         </div>
 
-        <div class="internship-card">
+        <div class="internship-card scroll-reveal">
             <div class="date-badge">August - September 2025</div>
             <div class="company-header">
                 <h3 class="company-name">ADB SAFEGATE Asia</h3>
@@ -142,13 +161,21 @@
             <p class="project-desc"><strong>Description:</strong> Perth Airport Runway Lighting Systems Internship</p>
         </div>
 
-        <div class="internship-card">
+        <div class="internship-card scroll-reveal">
             <div class="date-badge">July - August 2026</div>
             <div class="company-header">
                 <h3 class="company-name">Tasyapi Construction</h3>
                 <span class="location-tag">📍 Nicosia, TRNC</span>
             </div>
             <p class="project-desc"><strong>Description:</strong> TRNC Ercan Airport 2nd Runway Construction Internship</p>
+        </div>
+    </div>
+
+    <div class="globe-section scroll-reveal">
+        <div class="globe-viewport">
+            <div class="globe-sphere"></div>
+            <div class="orbit orbit-1"><span class="satellite">🛰️</span></div>
+            <div class="orbit orbit-2"><span class="satellite">🛰️</span></div>
         </div>
     </div>
 
@@ -173,9 +200,22 @@
             }
         }
 
+        function initScrollObserver() {
+            const elements = document.querySelectorAll('.scroll-reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+            elements.forEach(el => observer.observe(el));
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
             setLanguage(savedLanguage);
+            initScrollObserver();
         });
     </script>
 </body>
