@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utku Keklik | Personal Web Page</title>
+    <title>Utku Keklik | Geomatics Engineering</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="background-animations">
-    <div class="star"></div>
-    <div class="star"></div>
-    <div class="star"></div>
-    <div class="star"></div>
-    <div class="star"></div>
-    <div class="star"></div>
-    <div class="star"></div>
-    
+    <div class="night-elements">
+        <div class="star"></div><div class="star"></div><div class="star"></div>
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+    </div>
     <div class="bg-element bg-rocket r-1">🚀</div>
     <div class="bg-element bg-rocket r-2">🚀</div>
     <div class="bg-element bg-satellite s-1">🛰️</div>
@@ -27,10 +23,7 @@
 
     <div class="header-bar">
         <a href="index.html" class="brand-link">
-            <div class="logo-badge">
-                <span>U</span>
-                <span>K</span>
-            </div>
+            <div class="logo-badge"><span>U</span><span>K</span></div>
             <span class="brand-name">Utku Keklik</span>
         </a>
         <div>
@@ -40,40 +33,42 @@
     </div>
 
     <div id="content-tr" style="display: none;">
-        <nav>
-            <a href="index.html">Hakkımda</a>
-            <a href="yetenekler.html">Yetenekler</a>
-            <a href="stajlar.html">Stajlarım</a>
-            <a href="haritalar.html">Haritalar</a>
-        </nav>
+        <nav><a href="index.html">Hakkımda</a><a href="yetenekler.html">Yetenekler</a><a href="stajlar.html">Stajlarım</a><a href="haritalar.html">Haritalar</a></nav>
         <hr>
         
-        <div>
-            <h1>Merhaba, ilk yaptığım Web Sayfasına Hoş Geldiniz!</h1>
+        <div class="scroll-reveal" style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+            <h1 id="greeting-tr" style="color: #1e3c72; font-size: 28px;"></h1>
+            <p style="font-size: 18px; color: #475569; font-weight: 500; margin-top: 10px;">Ben Utku Keklik</p>
         </div>
-        
-        <div class="scroll-reveal" style="margin-top: 25px;">
-            <p>Benim adım Utku Keklik. 2004 yılında Ankara'da doğdum. Hacettepe Üniversitesi Geomatik Mühendisliği 4. sınıf öğrencisiyim.</p>
-            <p>Bu sayfa benim kişisel ve <strong>ilk geliştirdiğim web sitemdir</strong>.</p>
+
+        <div class="scroll-reveal">
+            <hr style="border: none; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+            <p style="line-height: 1.7; color: #475569;">
+                2004 yılında Ankara'da doğdum. Hacettepe Üniversitesi Geomatik Mühendisliği bölümünde lisans eğitimime devam ediyorum. 
+            </p>
+            <p style="line-height: 1.7; color: #475569; margin-top: 10px;">
+                8 sene lisanslı basketbol oynadım ve 3 sene lisanslı yüzdüm. Her türlü müzik dinlemeyi, araba sürmeyi, futbol ve Formula 1 takip etmeyi, gezmeyi, yürümeyi ve yüzmeyi çok severim. Tarih ve psikolojiyle yakından ilgileniyorum.
+            </p>
         </div>
     </div>
 
     <div id="content-en">
-        <nav>
-            <a href="index.html">About Me</a>
-            <a href="yetenekler.html">Skills</a>
-            <a href="stajlar.html">Internships</a>
-            <a href="haritalar.html">Maps</a>
-        </nav>
+        <nav><a href="index.html">About Me</a><a href="yetenekler.html">Skills</a><a href="stajlar.html">Internships</a><a href="haritalar.html">Maps</a></nav>
         <hr>
-        
-        <div>
-            <h1>Hello, Welcome to My Web Page!</h1>
+
+        <div class="scroll-reveal" style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+            <h1 id="greeting-en" style="color: #1e3c72; font-size: 28px;"></h1>
+            <p style="font-size: 18px; color: #475569; font-weight: 500; margin-top: 10px;">I am Utku Keklik</p>
         </div>
-        
-        <div class="scroll-reveal" style="margin-top: 25px;">
-            <p>My name is Utku Keklik. I was born in Ankara in 2004. I am a 4th-year Geomatics Engineering student at Hacettepe University.</p>
-            <p>This page is my personal and <strong>first website I have ever created</strong>.</p>
+
+        <div class="scroll-reveal">
+            <hr style="border: none; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+            <p style="line-height: 1.7; color: #475569;">
+                I was born in Ankara in 2004. I am currently an undergraduate student in the Department of Geomatics Engineering at Hacettepe University.
+            </p>
+            <p style="line-height: 1.7; color: #475569; margin-top: 10px;">
+                I played licensed basketball for 8 years and swam competitively with a license for 3 years. I love listening to all kinds of music, driving, following football and Formula 1, traveling, walking, and swimming. History and psychology are my areas of interest.
+            </p>
         </div>
     </div>
 
@@ -87,33 +82,45 @@
 
 </div>
 
-<footer>
-    © 2026 Utku Keklik GMT458
-</footer>
+<footer>© 2026 Utku Keklik GMT458</footer>
 
     <script>
         function setLanguage(lang) {
             localStorage.setItem('siteLanguage', lang);
-            const trBox = document.getElementById('content-tr');
-            const enBox = document.getElementById('content-en');
+            document.getElementById('content-tr').style.display = lang === 'tr' ? 'block' : 'none';
+            document.getElementById('content-en').style.display = lang === 'en' ? 'block' : 'none';
+        }
 
-            if (lang === 'tr') {
-                if (trBox) trBox.style.display = 'block';
-                if (enBox) enBox.style.display = 'none';
+        function setGreeting() {
+            const hour = new Date().getHours();
+            const minute = new Date().getMinutes();
+            const time = hour + (minute / 60);
+
+            let greetingTr = "";
+            let greetingEn = "";
+
+            if (time >= 6 && time < 12) {
+                greetingTr = "Günaydın, web siteme hoşgeldiniz...";
+                greetingEn = "Good morning, welcome to my website...";
+            } else if (time >= 12 && time < 18) {
+                greetingTr = "İyi günler, web siteme hoşgeldiniz...";
+                greetingEn = "Good afternoon, welcome to my website...";
+            } else if (time >= 18 && time < 22.5) {
+                greetingTr = "İyi akşamlar, web siteme hoşgeldiniz...";
+                greetingEn = "Good evening, welcome to my website...";
             } else {
-                if (trBox) trBox.style.display = 'none';
-                if (enBox) enBox.style.display = 'block';
+                greetingTr = "İyi geceler, web siteme hoşgeldiniz...";
+                greetingEn = "Good night, welcome to my website...";
             }
+
+            document.getElementById('greeting-tr').innerText = greetingTr;
+            document.getElementById('greeting-en').innerText = greetingEn;
         }
 
         function initScrollObserver() {
             const elements = document.querySelectorAll('.scroll-reveal');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
+                entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
             }, { threshold: 0.15 });
             elements.forEach(el => observer.observe(el));
         }
@@ -121,6 +128,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const savedLanguage = localStorage.getItem('siteLanguage') || 'en';
             setLanguage(savedLanguage);
+            setGreeting();
             initScrollObserver();
         });
     </script>

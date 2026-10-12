@@ -6,32 +6,109 @@
     <title>Maps | Utku Keklik</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- OpenLayers -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
 
     <style>
         .map-wrapper {
             width: 100%;
-            height: 420px;
-            margin: 20px 0 40px 0;
+            height: 500px;
+            margin: 10px 0 40px 0;
             border-radius: 16px;
             border: 2px solid rgba(226, 232, 240, 0.8);
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             position: relative;
             z-index: 15;
+            background: #aad3df;
         }
         .map-title {
             font-size: 19px;
             font-weight: 700;
             color: #1e3c72;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
             margin-top: 30px;
+        }
+        .map-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .filter-visited.active { background: #e11d48; color: white; }
+        .filter-wishlist.active { background: #3b82f6; color: white; }
+        .filter-btn.inactive { background: #e2e8f0; color: #64748b; box-shadow: none; }
+
+        .ol-popup {
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            bottom: 12px;
+            left: -50px;
+            min-width: 260px;
+            max-width: 280px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: opacity 0.2s;
+        }
+        .ol-popup:after, .ol-popup:before {
+            top: 100%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+        .ol-popup:after { border-top-color: white; border-width: 10px; left: 48px; margin-left: -10px; }
+        .ol-popup:before { border-top-color: #e2e8f0; border-width: 11px; left: 48px; margin-left: -11px; }
+        
+        .ol-popup-closer {
+            text-decoration: none;
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            color: #94a3b8;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .ol-popup-closer:hover { color: #0f172a; }
+        .ol-popup-closer:after { content: "✖"; }
+        
+        .city-name { font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; }
+        .city-pop { font-size: 12px; font-weight: 700; margin: 0 0 10px 0; display: inline-block; padding: 3px 8px; border-radius: 6px; }
+        .pop-visited { background: #ffe4e6; color: #e11d48; }
+        .pop-wishlist { background: #dbeafe; color: #2563eb; }
+        
+        .city-img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; background: #f1f5f9; display: block; transition: transform 0.2s ease; cursor: pointer; }
+        .city-img:hover { transform: scale(1.03); }
+        .city-desc { font-size: 13px; color: #475569; line-height: 1.5; margin: 0; }
+        .loading-text { font-size: 12px; color: #64748b; font-style: italic; margin-top: 5px; }
+
+        .leaflet-popup-content-wrapper { border-radius: 14px; padding: 4px; box-shadow: 0 8px 25px rgba(0,0,0,0.25); }
+        .leaflet-popup-content { font-family: 'Plus Jakarta Sans', sans-serif; margin: 10px 14px; }
+        
+        #leaflet-map, #ol-map {
+             width: 100%;
+             height: 500px; 
+             display: block;
         }
     </style>
 </head>
@@ -39,15 +116,9 @@
 
 <div class="background-animations">
     <div class="night-elements">
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
+        <div class="star"></div><div class="star"></div><div class="star"></div>
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
     </div>
-    
     <div class="bg-element bg-rocket r-1">🚀</div>
     <div class="bg-element bg-rocket r-2">🚀</div>
     <div class="bg-element bg-satellite s-1">🛰️</div>
@@ -58,10 +129,7 @@
 
     <div class="header-bar">
         <a href="index.html" class="brand-link">
-            <div class="logo-badge">
-                <span>U</span>
-                <span>K</span>
-            </div>
+            <div class="logo-badge"><span>U</span><span>K</span></div>
             <span class="brand-name">Utku Keklik</span>
         </a>
         <div>
@@ -70,228 +138,344 @@
         </div>
     </div>
 
-    <!-- TÜRKÇE BAŞLIKLAR -->
-    <div id="content-tr" style="display: none;">
-        <nav>
-            <a href="index.html">Hakkımda</a>
-            <a href="yetenekler.html">Yetenekler</a>
-            <a href="stajlar.html">Stajlarım</a>
-            <a href="haritalar.html">Haritalar</a>
-        </nav>
+    <div id="content-tr">
+        <nav><a href="index.html">Hakkımda</a><a href="yetenekler.html">Yetenekler</a><a href="stajlar.html">Stajlarım</a><a href="haritalar.html">Haritalar</a></nav>
         <hr>
         <div>
-            <h1>Harita Çalışmalarım</h1>
+            <h1>Haritalarım</h1>
+            <p style="font-size: 14px; color: #64748b;">Vikipedi API entegrasyonlu haritalarım.</p>
         </div>
         
         <div class="scroll-reveal">
-            <h3 class="map-title">Staj Yaptığım Şehirler (Leaflet)</h3>
+            <h3 class="map-title" id="title-leaflet">Staj Yaptığım Şehirler (Leaflet)</h3>
+            <div id="leaflet-map" class="map-wrapper"></div>
         </div>
-    </div>
 
-    <!-- İNGİLİZCE BAŞLIKLAR -->
-    <div id="content-en">
-        <nav>
-            <a href="index.html">About Me</a>
-            <a href="yetenekler.html">Skills</a>
-            <a href="stajlar.html">Internships</a>
-            <a href="haritalar.html">Maps</a>
-        </nav>
-        <hr>
-        <div>
-            <h1>My Map Projects</h1>
-        </div>
-        
         <div class="scroll-reveal">
-            <h3 class="map-title">Cities Where I Interned (Leaflet)</h3>
+            <h3 class="map-title" id="title-ol">Küresel Seyahat & Hedef Haritası (OpenLayers)</h3>
+            <div class="map-filters">
+                <button id="btn-visited" class="filter-btn filter-visited active" onclick="toggleLayer('visited')">📍 Gittiğim Yerler</button>
+                <button id="btn-wishlist" class="filter-btn filter-wishlist active" onclick="toggleLayer('wishlist')">🌟 Gitmek İstediğim Yerler</button>
+            </div>
+            <div id="ol-map" class="map-wrapper"></div>
         </div>
     </div>
 
-    <!-- LEAFLET HARİTASI (ORTAK) -->
-    <div class="scroll-reveal">
-        <div id="leaflet-map" class="map-wrapper"></div>
-    </div>
-
-    <!-- TÜRKÇE OPENLAYERS BAŞLIK -->
-    <div id="content-tr-2" style="display: none;">
-        <div class="scroll-reveal">
-            <h3 class="map-title">Daha Önceden Bulunduğum Şehirler & Koordinatlar (OpenLayers)</h3>
-        </div>
-    </div>
-
-    <!-- İNGİLİZCE OPENLAYERS BAŞLIK -->
-    <div id="content-en-2">
-        <div class="scroll-reveal">
-            <h3 class="map-title">Cities I Have Previously Visited & Coordinates (OpenLayers)</h3>
-        </div>
-    </div>
-
-    <!-- OPENLAYERS HARİTASI (ORTAK) -->
-    <div class="scroll-reveal">
-        <div id="ol-map" class="map-wrapper"></div>
-    </div>
-
-    <div class="globe-section scroll-reveal">
-        <div class="globe-viewport">
-            <div class="globe-sphere"></div>
-            <div class="orbit orbit-1"><span class="satellite">🛰️</span></div>
-            <div class="orbit orbit-2"><span class="satellite">🛰️</span></div>
-        </div>
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
     </div>
 
 </div>
 
-<footer>
-    © 2026 Utku Keklik GMT458
-</footer>
+<footer>© 2026 Utku Keklik GMT458</footer>
 
     <script>
         function setLanguage(lang) {
             localStorage.setItem('siteLanguage', lang);
-            const trBox = document.getElementById('content-tr');
-            const enBox = document.getElementById('content-en');
-            const trBox2 = document.getElementById('content-tr-2');
-            const enBox2 = document.getElementById('content-en-2');
-
-            if (lang === 'tr') {
-                if (trBox) trBox.style.display = 'block';
-                if (enBox) enBox.style.display = 'none';
-                if (trBox2) trBox2.style.display = 'block';
-                if (enBox2) enBox2.style.display = 'none';
-            } else {
-                if (trBox) trBox.style.display = 'none';
-                if (enBox) enBox.style.display = 'block';
-                if (trBox2) trBox2.style.display = 'none';
-                if (enBox2) enBox2.style.display = 'block';
-            }
+            const isTr = lang === 'tr';
+            
+            document.querySelector('h1').innerText = isTr ? "Haritalarım" : "My Maps";
+            document.querySelector('h1 + p').innerText = isTr ? "Vikipedi API entegrasyonlu haritalarım." : "My maps with Wikipedia API integration.";
+            
+            document.getElementById('title-leaflet').innerText = isTr ? "Staj Yaptığım Şehirler (Leaflet)" : "Cities Where I Interned (Leaflet)";
+            document.getElementById('title-ol').innerText = isTr ? "Küresel Seyahat & Hedef Haritası (OpenLayers)" : "Global Travel & Wishlist Map (OpenLayers)";
+            
+            document.getElementById('btn-visited').innerHTML = isTr ? "📍 Gittiğim Yerler" : "📍 Visited Cities";
+            document.getElementById('btn-wishlist').innerHTML = isTr ? "🌟 Gitmek İstediğim Yerler" : "🌟 Wishlist Cities";
+            
+            document.querySelectorAll('nav a').forEach((el, index) => {
+                const trNav = ["Hakkımda", "Yetenekler", "Stajlarım", "Haritalar"];
+                const enNav = ["About Me", "Skills", "Internships", "Maps"];
+                el.innerText = isTr ? trNav[index] : enNav[index];
+            });
         }
 
         function initScrollObserver() {
             const elements = document.querySelectorAll('.scroll-reveal');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
+                entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
             }, { threshold: 0.15 });
             elements.forEach(el => observer.observe(el));
         }
 
-        // --- HARİTA YÜKLEME KODLARI ---
-        function initMaps() {
-            // 1. Leaflet Haritası (Staj Lokasyonları)
-            var leafletMap = L.map('leaflet-map', {
-                worldCopyJump: false,
-                maxBounds: [[-90, -180], [90, 180]],
-                maxBoundsViscosity: 1.0
-            }).setView([20, 0], 2);
+        let visitedVisible = true;
+        let wishlistVisible = true;
+        let vectorLayerVisited, vectorLayerWishlist;
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                noWrap: true,
-                bounds: [[-90, -180], [90, 180]],
-                attribution: '© OpenStreetMap'
-            }).addTo(leafletMap);
+        function toggleLayer(type) {
+            if(type === 'visited') {
+                visitedVisible = !visitedVisible;
+                vectorLayerVisited.setVisible(visitedVisible);
+                document.getElementById('btn-visited').className = `filter-btn filter-visited ${visitedVisible ? 'active' : 'inactive'}`;
+            } else {
+                wishlistVisible = !wishlistVisible;
+                vectorLayerWishlist.setVisible(wishlistVisible);
+                document.getElementById('btn-wishlist').className = `filter-btn filter-wishlist ${wishlistVisible ? 'active' : 'inactive'}`;
+            }
+        }
 
-            L.marker([40.2317, 32.6842]).addTo(leafletMap).bindPopup("Kolin İnşaat - Kazan, Ankara");
-            L.marker([3.1390, 101.6869]).addTo(leafletMap).bindPopup("ADB SAFEGATE - Kuala Lumpur, Malezya");
-            L.marker([35.1583, 33.5558]).addTo(leafletMap).bindPopup("Taşyapı İnşaat - Ercan Havalimanı, KKTC");
-
-            // 2. OpenLayers Haritası (Gezilen Şehirler & Koordinatlar)
-            var olMap = new ol.Map({
-                target: 'ol-map',
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM({ wrapX: false })
-                    })
-                ],
-                view: new ol.View({
-                    center: ol.proj.fromLonLat([0, 20]),
-                    zoom: 2,
-                    multiWorld: false
-                })
-            });
-
-            var cities = [
-                {name: 'İstanbul', coords: [28.9784, 41.0082]},
-                {name: 'Ankara', coords: [32.8597, 39.9334]},
-                {name: 'İzmir', coords: [27.1428, 38.4237]},
-                {name: 'Bursa', coords: [29.0610, 40.1828]},
-                {name: 'Antalya', coords: [30.7133, 36.8969]},
-                {name: 'Gaziantep', coords: [37.3833, 37.0662]},
-                {name: 'Karabük', coords: [32.6277, 41.1956]},
-                {name: 'Mersin', coords: [34.6415, 36.8121]},
-                {name: 'Freiburg', coords: [7.8490, 47.9990]},
-                {name: 'Strazburg', coords: [7.7521, 48.5734]},
-                {name: 'Basel', coords: [7.5886, 47.5596]},
-                {name: 'Halep', coords: [37.1343, 36.2021]},
-                {name: 'Kuala Lumpur', coords: [101.6869, 3.1390]},
-                {name: 'Melakka', coords: [102.2501, 2.1896]},
-                {name: 'Ipoh', coords: [101.0901, 4.5975]},
-                {name: 'Seremban', coords: [101.9381, 2.7297]},
-                {name: 'Eskişehir', coords: [30.5256, 39.7767]},
-                {name: 'Afyonkarahisar', coords: [30.5367, 38.7507]},
-                {name: 'Bartın', coords: [32.3338, 41.6344]},
-                {name: 'Adana', coords: [35.3213, 37.0000]},
-                {name: 'Manisa', coords: [27.4296, 38.6140]},
-                {name: 'Kahramanmaraş', coords: [36.9371, 37.5753]},
-                {name: 'Sivas', coords: [37.0179, 39.7505]},
-                {name: 'Nevşehir', coords: [34.7122, 38.6247]},
-                {name: 'Konya', coords: [32.4846, 37.8746]},
-                {name: 'Malatya', coords: [38.3167, 38.3552]},
-                {name: 'Balıkesir', coords: [27.8821, 39.6484]},
-                {name: 'Çanakkale', coords: [26.4086, 40.1553]},
-                {name: 'Tekirdağ', coords: [27.5110, 40.9780]},
-                {name: 'Şanlıurfa', coords: [38.7955, 37.1674]},
-                {name: 'Hatay', coords: [36.1666, 36.2000]},
-                {name: 'Bolu', coords: [31.6061, 40.7392]},
-                {name: 'Aydın', coords: [27.8456, 37.8380]},
-                {name: 'Girne', coords: [33.3165, 35.3369]},
-                {name: 'Lefkoşa', coords: [33.3666, 35.1856]},
-                {name: 'Gazimağusa', coords: [33.9371, 35.1250]},
-                {name: 'Dipkarpaz', coords: [34.3828, 35.5985]},
-                {name: 'Colmar', coords: [7.3590, 48.0794]},
-                {name: 'Mulhouse', coords: [7.3359, 47.7508]},
-                {name: 'Breisach', coords: [7.5807, 48.0310]},
-                {name: 'Bad Krozingen', coords: [7.7011, 47.9157]},
-                {name: 'Offenburg', coords: [7.9405, 48.4716]},
-                {name: 'Aksaray', coords: [34.0253, 38.3687]},
-                {name: 'Kayseri', coords: [35.4853, 38.7312]}
-            ];
-
-            var features = cities.map(function(city) {
-                return new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.fromLonLat(city.coords)),
-                    name: city.name
-                });
-            });
-
-            var vectorSource = new ol.source.Vector({ features: features });
-
-            var vectorLayer = new ol.layer.Vector({
-                source: vectorSource,
-                style: function(feature, resolution) {
-                    var style = new ol.style.Style({
-                        image: new ol.style.Circle({
-                            radius: 6,
-                            fill: new ol.style.Fill({color: '#e11d48'}),
-                            stroke: new ol.style.Stroke({color: '#ffffff', width: 2})
-                        })
-                    });
-                    
-                    // Zoom seviyesine göre dinamik olarak şehir isimleri belirir
-                    if (resolution < 5000) {
-                        style.setText(new ol.style.Text({
-                            text: feature.get('name'),
-                            offsetY: -15,
-                            font: 'bold 13px "Plus Jakarta Sans", sans-serif',
-                            fill: new ol.style.Fill({color: '#0f172a'}),
-                            stroke: new ol.style.Stroke({color: '#ffffff', width: 3})
-                        }));
-                    }
-                    return style;
+        async function fetchWikiData(cityName) {
+            try {
+                let query = encodeURIComponent(cityName);
+                let lang = 'tr';
+                let response = await fetch(`https://tr.wikipedia.org/api/rest_v1/page/summary/${query}`);
+                if (!response.ok) {
+                    response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`);
+                    lang = 'en';
                 }
-            });
-            olMap.addLayer(vectorLayer);
+                if (!response.ok) return null;
+                
+                let data = await response.json();
+                return {
+                    extract: data.extract ? (data.extract.substring(0, 120) + '...') : 'Bilgi bulunamadı.',
+                    image: data.thumbnail ? data.thumbnail.source : null,
+                    url: data.content_urls ? data.content_urls.desktop.page : `https://${lang}.wikipedia.org/wiki/${query}`
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function initMaps() {
+            setTimeout(() => {
+                var leafletMap = L.map('leaflet-map', {
+                    worldCopyJump: true
+                }).setView([25, 55], 3);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(leafletMap);
+
+                leafletMap.invalidateSize();
+
+                const internships = [
+                    {coords: [40.2317, 32.6842], company: "Kolin İnşaat", city: "Ankara", pop: "5.7 Milyon"},
+                    {coords: [3.1390, 101.6869], company: "ADB SAFEGATE", city: "Kuala Lumpur", pop: "1.8 Milyon"},
+                    {coords: [35.1583, 33.5558], company: "Taşyapı İnşaat", city: "Lefkoşa", pop: "382 Bin"}
+                ];
+
+                internships.forEach(item => {
+                    let marker = L.marker(item.coords).addTo(leafletMap);
+                    marker.bindPopup(`<div style="min-width: 220px; text-align: center;"><p class="loading-text">Veriler çekiliyor... 🛰️</p></div>`);
+                    
+                    marker.on('mouseover', function () {
+                        this.openPopup();
+                    });
+
+                    marker.on('popupopen', async function(e) {
+                        let popup = e.popup;
+                        let wikiData = await fetchWikiData(item.city);
+                        
+                        let imgHTML = '';
+                        if (wikiData && wikiData.image) {
+                            imgHTML = `<a href="${wikiData.url}" target="_blank" rel="noopener noreferrer"><img src="${wikiData.image}" class="city-img" title="Wikipedia sayfasına gitmek için tıklayın"></a>`;
+                        }
+                        
+                        let desc = wikiData ? wikiData.extract : 'Bu bölge için Wikipedia özeti bulunamadı.';
+                        
+                        popup.setContent(`
+                            <div style="min-width: 240px;">
+                                ${imgHTML}
+                                <h3 class="city-name" style="font-size: 17px; margin-bottom: 4px;">${item.company}</h3>
+                                <span class="city-pop pop-visited">📍 ${item.city} | 👥 Nüfus: ${item.pop}</span>
+                                <p class="city-desc">${desc}</p>
+                            </div>
+                        `);
+                    });
+                });
+
+                var visitedCities = [
+                    {name: 'İstanbul', coords: [28.9784, 41.0082], pop: '15.4 Milyon'},
+                    {name: 'Ankara', coords: [32.8597, 39.9334], pop: '5.7 Milyon'},
+                    {name: 'İzmir', coords: [27.1428, 38.4237], pop: '4.3 Milyon'},
+                    {name: 'Bursa', coords: [29.0610, 40.1828], pop: '3.1 Milyon'},
+                    {name: 'Antalya', coords: [30.7133, 36.8969], pop: '2.6 Milyon'},
+                    {name: 'Gaziantep', coords: [37.3833, 37.0662], pop: '2.1 Milyon'},
+                    {name: 'Karabük', coords: [32.6277, 41.1956], pop: '1.2 Milyon'},
+                    {name: 'Mersin', coords: [34.6415, 36.8121], pop: '1.8 Milyon'},
+                    {name: 'Freiburg', coords: [7.8490, 47.9990], pop: '230 Bin'},
+                    {name: 'Strazburg', coords: [7.7521, 48.5734], pop: '284 Bin'},
+                    {name: 'Basel', coords: [7.5886, 47.5596], pop: '175 Bin'},
+                    {name: 'Halep', coords: [37.1343, 36.2021], pop: '1.8 Milyon'},
+                    {name: 'Kuala Lumpur', coords: [101.6869, 3.1390], pop: '1.8 Milyon'},
+                    {name: 'Melakka', coords: [102.2501, 2.1896], pop: '579 Bin'},
+                    {name: 'Ipoh', coords: [101.0901, 4.5975], pop: '657 Bin'},
+                    {name: 'Seremban', coords: [101.9381, 2.7297], pop: '314 Bin'},
+                    {name: 'Eskişehir', coords: [30.5256, 39.7767], pop: '898 Bin'},
+                    {name: 'Afyonkarahisar', coords: [30.5367, 38.7507], pop: '736 Bin'},
+                    {name: 'Bartın', coords: [32.3338, 41.6344], pop: '198 Bin'},
+                    {name: 'Adana', coords: [35.3213, 37.0000], pop: '2.2 Milyon'},
+                    {name: 'Manisa', coords: [27.4296, 38.6140], pop: '1.4 Milyon'},
+                    {name: 'Kahramanmaraş', coords: [36.9371, 37.5753], pop: '1.1 Milyon'},
+                    {name: 'Sivas', coords: [37.0179, 39.7505], pop: '636 Bin'},
+                    {name: 'Nevşehir', coords: [34.7122, 38.6247], pop: '308 Bin'},
+                    {name: 'Konya', coords: [32.4846, 37.8746], pop: '2.2 Milyon'},
+                    {name: 'Malatya', coords: [38.3167, 38.3552], pop: '806 Bin'},
+                    {name: 'Balıkesir', coords: [27.8821, 39.6484], pop: '1.2 Milyon'},
+                    {name: 'Çanakkale', coords: [26.4086, 40.1553], pop: '541 Bin'},
+                    {name: 'Tekirdağ', coords: [27.5110, 40.9780], pop: '1.1 Milyon'},
+                    {name: 'Şanlıurfa', coords: [38.7955, 37.1674], pop: '2.1 Milyon'},
+                    {name: 'Hatay', coords: [36.1666, 36.2000], pop: '1.6 Milyon'},
+                    {name: 'Bolu', coords: [31.6061, 40.7392], pop: '316 Bin'},
+                    {name: 'Aydın', coords: [27.8456, 37.8380], pop: '1.1 Milyon'},
+                    {name: 'Girne', coords: [33.3165, 35.3369], pop: '33 Bin'},
+                    {name: 'Lefkoşa', coords: [33.3666, 35.1856], pop: '61 Bin'},
+                    {name: 'Gazimağusa', coords: [33.9371, 35.1250], pop: '40 Bin'},
+                    {name: 'Dipkarpaz', coords: [34.3828, 35.5985], pop: '2 Bin'},
+                    {name: 'Colmar', coords: [7.3590, 48.0794], pop: '70 Bin'},
+                    {name: 'Mulhouse', coords: [7.3359, 47.7508], pop: '108 Bin'},
+                    {name: 'Breisach', coords: [7.5807, 48.0310], pop: '15 Bin'},
+                    {name: 'Bad Krozingen', coords: [7.7011, 47.9157], pop: '19 Bin'},
+                    {name: 'Offenburg', coords: [7.9405, 48.4716], pop: '60 Bin'},
+                    {name: 'Aksaray', coords: [34.0253, 38.3687], pop: '423 Bin'},
+                    {name: 'Kayseri', coords: [35.4853, 38.7312], pop: '1.4 Milyon'}
+                ];
+
+                var wishlistCities = [
+                    {name: 'New York', coords: [-74.0060, 40.7128], pop: '8.3 Milyon'},
+                    {name: 'Londra', coords: [-0.1278, 51.5074], pop: '8.9 Milyon'},
+                    {name: 'Los Angeles', coords: [-118.2437, 34.0522], pop: '3.8 Milyon'},
+                    {name: 'Toronto', coords: [-79.3470, 43.6510], pop: '2.9 Milyon'},
+                    {name: 'Berlin', coords: [13.4050, 52.5200], pop: '3.6 Milyon'},
+                    {name: 'Paris', coords: [2.3522, 48.8566], pop: '2.1 Milyon'},
+                    {name: 'Frankfurt', coords: [8.6821, 50.1109], pop: '730 Bin'},
+                    {name: 'Roma', coords: [12.4964, 41.9028], pop: '2.8 Milyon'},
+                    {name: 'Madrid', coords: [-3.7038, 40.4168], pop: '3.2 Milyon'},
+                    {name: 'Barselona', coords: [2.1734, 41.3851], pop: '1.6 Milyon'},
+                    {name: 'Viyana', coords: [16.3738, 48.2082], pop: '1.9 Milyon'},
+                    {name: 'Budapeşte', coords: [19.0402, 47.4979], pop: '1.7 Milyon'},
+                    {name: 'Prag', coords: [14.4378, 50.0755], pop: '1.3 Milyon'},
+                    {name: 'Pekin', coords: [116.4074, 39.9042], pop: '21.5 Milyon'},
+                    {name: 'Şanghay', coords: [121.4737, 31.2304], pop: '24.2 Milyon'},
+                    {name: 'Hong Kong', coords: [114.1694, 22.3193], pop: '7.4 Milyon'},
+                    {name: 'Yeni Delhi', coords: [77.2090, 28.6139], pop: '14.2 Milyon'},
+                    {name: 'Beyrut', coords: [35.5018, 33.8938], pop: '2.4 Milyon'},
+                    {name: 'Tahran', coords: [51.3890, 35.6892], pop: '8.6 Milyon'},
+                    {name: 'Karaçi', coords: [67.0011, 24.8607], pop: '14.9 Milyon'},
+                    {name: 'İslamabad', coords: [73.0479, 33.6844], pop: '1.0 Milyon'},
+                    {name: 'Mumbai', coords: [72.8777, 19.0760], pop: '12.4 Milyon'},
+                    {name: 'Sidney', coords: [151.2093, -33.8688], pop: '5.3 Milyon'},
+                    {name: 'Bangkok', coords: [100.5018, 13.7563], pop: '10.5 Milyon'},
+                    {name: 'Melbourne', coords: [144.9631, -37.8136], pop: '5.0 Milyon'},
+                    {name: 'Moskova', coords: [37.6173, 55.7558], pop: '12.5 Milyon'},
+                    {name: 'Kahire', coords: [31.2357, 30.0444], pop: '9.5 Milyon'},
+                    {name: 'Cape Town', coords: [18.4241, -33.9249], pop: '4.3 Milyon'},
+                    {name: 'Milano', coords: [9.1900, 45.4642], pop: '1.3 Milyon'},
+                    {name: 'Venedik', coords: [12.3155, 45.4408], pop: '260 Bin'},
+                    {name: 'Cakarta', coords: [106.8456, -6.2088], pop: '10.5 Milyon'},
+                    {name: 'Tokyo', coords: [139.6917, 35.6895], pop: '13.9 Milyon'},
+                    {name: 'Seul', coords: [126.9780, 37.5665], pop: '9.7 Milyon'},
+                    {name: 'Kabil', coords: [69.2075, 34.5553], pop: '4.4 Milyon'},
+                    {name: 'Varşova', coords: [21.0122, 52.2297], pop: '1.7 Milyon'},
+                    {name: 'Amsterdam', coords: [4.9041, 52.3676], pop: '821 Bin'},
+                    {name: 'Lizbon', coords: [-9.1393, 38.7223], pop: '504 Bin'},
+                    {name: 'Kopenhag', coords: [12.5683, 55.6761], pop: '602 Bin'},
+                    {name: 'Stockholm', coords: [18.0686, 59.3293], pop: '975 Bin'},
+                    {name: 'Oslo', coords: [10.7522, 59.9139], pop: '681 Bin'},
+                    {name: 'Pyongyang', coords: [125.7625, 39.0392], pop: '2.8 Milyon'},
+                    {name: 'Buenos Aires', coords: [-58.3816, -34.6037], pop: '3.1 Milyon'},
+                    {name: 'Rio de Janeiro', coords: [-43.1729, -22.9068], pop: '6.7 Milyon'},
+                    {name: 'São Paulo', coords: [-46.6333, -23.5505], pop: '12.3 Milyon'},
+                    {name: 'Singapur', coords: [103.8198, 1.3521], pop: '5.7 Milyon'}
+                ];
+
+                function createFeatures(cityArray, type) {
+                    return cityArray.map(city => {
+                        let feat = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat(city.coords)),
+                            name: city.name,
+                            pop: city.pop,
+                            type: type
+                        });
+                        return feat;
+                    });
+                }
+
+                const visitedStyle = new ol.style.Style({
+                    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({color: '#e11d48'}), stroke: new ol.style.Stroke({color: '#ffffff', width: 2}) })
+                });
+                
+                const wishlistStyle = new ol.style.Style({
+                    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({color: '#3b82f6'}), stroke: new ol.style.Stroke({color: '#ffffff', width: 2}) })
+                });
+
+                vectorLayerVisited = new ol.layer.Vector({ source: new ol.source.Vector({ features: createFeatures(visitedCities, 'visited'), wrapX: true }), style: visitedStyle });
+                vectorLayerWishlist = new ol.layer.Vector({ source: new ol.source.Vector({ features: createFeatures(wishlistCities, 'wishlist'), wrapX: true }), style: wishlistStyle });
+
+                var olMap = new ol.Map({
+                    target: 'ol-map',
+                    layers: [ new ol.layer.Tile({ source: new ol.source.OSM({ wrapX: true }) }), vectorLayerVisited, vectorLayerWishlist ],
+                    view: new ol.View({ center: ol.proj.fromLonLat([10, 35]), zoom: 2.2, multiWorld: true })
+                });
+
+                const popupContainer = document.getElementById('popup');
+                const popupContent = document.getElementById('popup-content');
+                const popupCloser = document.getElementById('popup-closer');
+
+                const overlay = new ol.Overlay({
+                    element: popupContainer,
+                    autoPan: { animation: { duration: 250 } },
+                    positioning: 'bottom-center',
+                    offset: [0, -15]
+                });
+                olMap.addOverlay(overlay);
+
+                popupCloser.onclick = function() {
+                    overlay.setPosition(undefined);
+                    popupCloser.blur();
+                    return false;
+                };
+
+                olMap.on('singleclick', async function (evt) {
+                    const feature = olMap.forEachFeatureAtPixel(evt.pixel, function (feat) { return feat; });
+                    
+                    if (feature) {
+                        const coords = feature.getGeometry().getCoordinates();
+                        const cityName = feature.get('name');
+                        const pop = feature.get('pop');
+                        const type = feature.get('type');
+                        const badgeClass = type === 'visited' ? 'pop-visited' : 'pop-wishlist';
+
+                        popupContent.innerHTML = `
+                            <h3 class="city-name">${cityName}</h3>
+                            <span class="city-pop ${badgeClass}">👥 Nüfus: ${pop}</span>
+                            <p class="loading-text">Wikipedia'dan canlı veriler çekiliyor... 🛰️</p>
+                        `;
+                        overlay.setPosition(coords);
+
+                        const wikiData = await fetchWikiData(cityName);
+                        
+                        let imgHTML = '';
+                        if (wikiData && wikiData.image) {
+                            imgHTML = `<a href="${wikiData.url}" target="_blank" rel="noopener noreferrer"><img src="${wikiData.image}" class="city-img" title="Wikipedia sayfasına gitmek için tıklayın"></a>`;
+                        }
+                        
+                        if(wikiData) {
+                            popupContent.innerHTML = `
+                                ${imgHTML}
+                                <h3 class="city-name">${cityName}</h3>
+                                <span class="city-pop ${badgeClass}">👥 Nüfus: ${pop}</span>
+                                <p class="city-desc">${wikiData.extract}</p>
+                            `;
+                        } else {
+                            popupContent.innerHTML = `
+                                <h3 class="city-name">${cityName}</h3>
+                                <span class="city-pop ${badgeClass}">👥 Nüfus: ${pop}</span>
+                                <p class="city-desc">Bu şehir için Wikipedia özeti bulunamadı.</p>
+                            `;
+                        }
+                    } else {
+                        overlay.setPosition(undefined);
+                    }
+                });
+
+                olMap.on('pointermove', function (e) {
+                    const pixel = olMap.getEventPixel(e.originalEvent);
+                    const hit = olMap.hasFeatureAtPixel(pixel);
+                    olMap.getTargetElement().style.cursor = hit ? 'pointer' : '';
+                });
+            }, 100);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
